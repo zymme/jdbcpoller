@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jdbc="http://www.mulesoft.org/schema/mule/jdbc" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="CE-3.4.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jdbc http://www.mulesoft.org/schema/mule/jdbc/current/mule-jdbc.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+    <jdbc:mysql-data-source name="MySQL_Data_Source" user="root" password="Bluebeed00" url="jdbc:mysql://localhost:3306/test" transactionIsolation="UNSPECIFIED" doc:name="MySQL Data Source"/>
+    <jdbc:connector name="JDBC" dataSource-ref="MySQL_Data_Source" validateConnections="true" queryTimeout="-1" pollingFrequency="0" doc:name="JDBC"/>
+    <flow name="jdbcpollerFlow1" doc:name="jdbcpollerFlow1">
+        <poll doc:name="Poll" frequency="5000">
+            <jdbc:outbound-endpoint exchange-pattern="request-response"  queryTimeout="-1" doc:name="Database" connector-ref="JDBC" queryKey="selectUsers">
+                <jdbc:query key="selectUsers" value="select * from test.USERS"/>
+            </jdbc:outbound-endpoint>
+        </poll>
+        <logger message="#[message.payload] after select" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
